@@ -33,11 +33,16 @@ def show_main_window():
         if event == "Exit":
             break
         elif event == "Add Category":
-            category.add_category()
+            category.manage_categories()
         elif event == "Add Expense":
             transaction.add_transaction("expense")
+            finance_data = data.load_data()
+            window["-TABLE-"].update(values=format_data_for_table(finance_data.get("transactions", [])))
         elif event == "Add Income":
             transaction.add_transaction("income")
+            finance_data = data.load_data()
+            window["-TABLE-"].update(values=format_data_for_table(finance_data.get("transactions", [])))
+            
 
     finance_data = data.load_data()
     window.close()

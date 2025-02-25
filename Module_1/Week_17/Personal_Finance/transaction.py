@@ -1,23 +1,49 @@
 import PySimpleGUI as sg
 import data
 
+
 def add_transaction(transaction_type):
     finance_data = data.load_data()
+    categories = finance_data.get("categories", [])
 
-    if not finance_data["categories"]:
-        sg.popup_error("Please add a category before continuing.")
-        return
+    layout = [
+        [sg.Text("Title"), sg.InputText(key="-TITLE-")],
+        [sg.Text("Amount"), sg.InputText(key="-AMOUNT-")],
+        [sg.Text("Category"), sg.Combo(categories, key="-CATEGORY-")],
+        [sg.Button("Save"), sg.Button("Cancel")]
+    ]
 
-    title = sg.popup_get_text("Enter transaction title:")
-    amount = sg.popup_get_text("Enter transaction amount:")
-    category = sg.popup_get_text("Enter transaction category:")
+    window= sg.Window("Add Transaction", layout)
+    event, values =  window.read()
 
-    if title and amount.isdigit() and category:
-        finance_data["transactions"].append({
+    if event == "Save" and values["-TITLE-"] and values["-AMOUNT-"].isdigit() and values["-CATEGORY-"]:
+        finance_data.setdefault("transactions", []).append({
             "type": transaction_type,
-            "title": title,
-            "amount": int(amount),
-            "category": category
+            "title": values["-TITLE-"],
+            "amount": int(values["-AMOUNT-"]),
+            "category": values["-CATEGORY-"]
         })
         data.save_data(finance_data)
-        sg.popup("Transaction saved!") 
+        sg.popup("Transaction saved")
+
+    window.close()
+
+
+
+#     if not finance_data["categories"]:
+#         sg.popup_error("Please add a category before continuing.")
+#         return
+
+#     title = sg.popup_get_text("Enter transaction title:")
+#     amount = sg.popup_get_text("Enter transaction amount:")
+#     category = sg.popup_get_text("Enter transaction category:")
+
+#     if title and amount.isdigit() and category:
+#         finance_data["transactions"].append({
+#             "type": transaction_type,
+#             "title": title,
+#             "amount": int(amount),
+#             "category": category
+#         })
+#         data.save_data(finance_data)
+#         sg.popup("Transaction saved!") 
